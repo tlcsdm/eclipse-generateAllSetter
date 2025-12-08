@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension point="org.eclipse.ui.commands">
+      <command id="com.tlcsdm.eclipse.generateallsetter.genAllGetter"
+               name="Generate all getter"
+               description="Generate a code snippet that assigns the values of a object's getters methods to local variables">
+      </command>
+      <command id="com.tlcsdm.eclipse.generateallsetter.genAllSetterNoDefault"
+               name="Generate all setter no default value"
+               description="Generate all setter methods for class without default values">
+      </command>
+      <command id="com.tlcsdm.eclipse.generateallsetter.genAllSetterWithDefault"
+               name="Generate all setter with default value"
+               description="Generate all setter methods for class with default values">
+      </command>
+      <command id="com.tlcsdm.eclipse.generateallsetter.genSetterGetterConverter"
+               name="Generate setter getter converter"
+               description="Generate converter that takes functions's parameter amd returns new object with values populated using setters and getters">
+      </command>
+   </extension>
+   
+   <extension point="org.eclipse.ui.handlers">
+   <handler
+			class="com.tlcsdm.eclipse.generateallsetter.handler.GenAllGetterHandler"
+			commandId="com.tlcsdm.eclipse.generateallsetter.genAllGetter">
+   </handler>
+   <handler
+			class="com.tlcsdm.eclipse.generateallsetter.handler.GenAllSetterNoDefaultHandler"
+			commandId="com.tlcsdm.eclipse.generateallsetter.genAllSetterNoDefault">
+   </handler>
+   <handler
+			class="com.tlcsdm.eclipse.generateallsetter.handler.GenAllSetterWithDefaultHandler"
+			commandId="com.tlcsdm.eclipse.generateallsetter.genAllSetterWithDefault">
+   </handler>
+   <handler
+			class="com.tlcsdm.eclipse.generateallsetter.handler.GenSettergetterConverterHandler"
+			commandId="com.tlcsdm.eclipse.generateallsetter.genSetterGetterConverter">
+   </handler>
+   </extension>
+   <extension point="org.eclipse.ui.menus">
+   <!-- 在 Java 编辑器上下文菜单添加 -->
+   <menuContribution
+         locationURI="popup:org.eclipse.jdt.ui.source.menu?after=generateGroup">
+      <command
+            commandId="com.tlcsdm.eclipse.generateallsetter.genAllGetter"
+            label="Generate all getter"
+            style="push">
+      </command>
+      <command
+            commandId="com.tlcsdm.eclipse.generateallsetter.genAllSetterNoDefault"
+            label="Generate all setter no default value"
+            style="push">
+      </command>
+      <command
+            commandId="com.tlcsdm.eclipse.generateallsetter.genAllSetterWithDefault"
+            label="Generate all setter with default value"
+            style="push">
+      </command>
+      <command
+            commandId="com.tlcsdm.eclipse.generateallsetter.genSetterGetterConverter"
+            label="Generate setter getter converter"
+            style="push">
+      </command>
+   </menuContribution>
+   </extension>
+
+</plugin>
