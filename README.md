@@ -2,12 +2,11 @@
 
 This plugin generates call to setter method value for class.
 
-## Use  
-1. Via Eclipse Content Assist  
-Press Ctrl + Space (Content Assist) inside the parentheses.
-
-2. Using the Shortcut Key  
-Place the cursor inside a method call or on the method name and then press Ctrl + Alt + O
+## Feature  
+- Generate local variable assignments from an object's getters (Generate all getter).
+- Generate setter calls without default values (Generate all setter no default value).
+- Generate setter calls with sensible default values (Generate all setter with default value).
+- Generate a converter block inside a method body that creates a new object, calls setters, and returns it (Generate setter getter converter).
 
 ## Build
 
