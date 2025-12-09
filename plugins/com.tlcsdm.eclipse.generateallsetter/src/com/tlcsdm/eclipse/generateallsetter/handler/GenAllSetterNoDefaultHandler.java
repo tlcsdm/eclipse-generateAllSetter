@@ -75,8 +75,9 @@ public class GenAllSetterNoDefaultHandler extends AbstractHandler {
 
 			List<String> lines = new ArrayList<>();
 			for (IMethodBinding m : type.getDeclaredMethods()) {
-				if (m == null)
+				if (m == null) {
 					continue;
+				}
 				if (m.getParameterTypes() != null && m.getParameterTypes().length == 1) {
 					String name = m.getName();
 					if (name.startsWith("set") && name.length() > 3) {
@@ -94,8 +95,32 @@ public class GenAllSetterNoDefaultHandler extends AbstractHandler {
 				sb.append(l).append(System.lineSeparator());
 			}
 
-			// insert at caret
-			doc.replace(offset, 0, sb.toString());
+			// insert at next line of the current caret line with preserved indentation
+			int line = doc.getLineOfOffset(offset);
+			int lineOffset = doc.getLineOffset(line);
+			int lineLength = doc.getLineLength(line);
+			String indent = "";
+			try {
+				String lineText = doc.get(lineOffset, lineLength);
+				for (int i = 0; i < lineText.length(); i++) {
+					char c = lineText.charAt(i);
+					if (c == ' ' || c == '\t') {
+						indent += c;
+					} else {
+						break;
+					}
+				}
+			} catch (BadLocationException e) {
+				// ignore
+			}
+
+			StringBuilder indented = new StringBuilder();
+			for (String l : lines) {
+				indented.append(indent).append(l).append(System.lineSeparator());
+			}
+
+			int lineEnd = lineOffset + lineLength;
+			doc.replace(lineEnd, 0, System.lineSeparator() + indented.toString());
 
 		} catch (BadLocationException e) {
 			e.printStackTrace();

@@ -91,24 +91,60 @@ public class GenSettergetterConverterHandler extends AbstractHandler {
 			}
 			lines.add("return " + varName + ";");
 
-			if (lines.isEmpty())
+			if (lines.isEmpty()) {
 				return null;
+			}
 
-			// insert at beginning of method body
+			// insert near caret inside method body: use next line of caret but ensure within body
 			if (method.getBody() == null) {
 				return null;
 			}
-			int insertOffset = method.getBody().getStartPosition() + 1;
+			int bodyStart = method.getBody().getStartPosition() + 1;
+			int bodyEnd = method.getBody().getStartPosition() + method.getBody().getLength() - 1;
 
-			StringBuilder sb = new StringBuilder();
-			for (String l : lines) {
-				sb.append(l).append(System.lineSeparator());
+			int insertOffset;
+			try {
+				if (offset < bodyStart) {
+					insertOffset = bodyStart;
+				} else {
+					int line = doc.getLineOfOffset(offset);
+					int lineEnd = doc.getLineOffset(line) + doc.getLineLength(line);
+					insertOffset = lineEnd;
+					if (insertOffset > bodyEnd) {
+						insertOffset = bodyEnd;
+					}
+				}
+
+				// compute indentation at insertion line
+				int insertLine = doc.getLineOfOffset(Math.max(0, insertOffset));
+				int insertLineOffset = doc.getLineOffset(insertLine);
+				int insertLineLength = doc.getLineLength(insertLine);
+				String indent = "";
+				try {
+					String lineText = doc.get(insertLineOffset, insertLineLength);
+					for (int i = 0; i < lineText.length(); i++) {
+						char c = lineText.charAt(i);
+						if (c == ' ' || c == '\t') {
+							indent += c;
+						} else {
+							break;
+						}
+					}
+				} catch (BadLocationException e) {
+					// ignore
+				}
+
+				StringBuilder sb = new StringBuilder();
+				for (String l : lines) {
+					sb.append(indent).append(l).append(System.lineSeparator());
+				}
+
+				// ensure we add a newline before inserted block
+				doc.replace(insertOffset, 0, System.lineSeparator() + sb.toString());
+			} catch (BadLocationException e) {
+				e.printStackTrace();
 			}
 
-			doc.replace(insertOffset, 0, sb.toString());
-
-		} catch (BadLocationException e) {
-			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

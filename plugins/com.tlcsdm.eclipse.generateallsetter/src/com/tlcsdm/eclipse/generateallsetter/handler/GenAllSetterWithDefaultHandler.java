@@ -1,20 +1,9 @@
 package com.tlcsdm.eclipse.generateallsetter.handler;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTParser;
-import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.IMethodBinding;
-import org.eclipse.jdt.core.dom.ITypeBinding;
-import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
-import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -23,6 +12,18 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.texteditor.ITextEditor;
+
+import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
+import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
+import org.eclipse.jdt.core.dom.IMethodBinding;
+import org.eclipse.jdt.core.dom.ITypeBinding;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GenAllSetterWithDefaultHandler extends AbstractHandler {
 
@@ -76,8 +77,9 @@ public class GenAllSetterWithDefaultHandler extends AbstractHandler {
 
 			List<String> lines = new ArrayList<>();
 			for (IMethodBinding m : type.getDeclaredMethods()) {
-				if (m == null)
+				if (m == null) {
 					continue;
+				}
 				if (m.getParameterTypes() != null && m.getParameterTypes().length == 1) {
 					String name = m.getName();
 					if (name.startsWith("set") && name.length() > 3) {
@@ -97,8 +99,32 @@ public class GenAllSetterWithDefaultHandler extends AbstractHandler {
 				sb.append(l).append(System.lineSeparator());
 			}
 
-			// insert at caret
-			doc.replace(offset, 0, sb.toString());
+			// insert at next line of current caret line with preserved indentation
+			int line = doc.getLineOfOffset(offset);
+			int lineOffset = doc.getLineOffset(line);
+			int lineLength = doc.getLineLength(line);
+			String indent = "";
+			try {
+				String lineText = doc.get(lineOffset, lineLength);
+				for (int i = 0; i < lineText.length(); i++) {
+					char c = lineText.charAt(i);
+					if (c == ' ' || c == '\t') {
+						indent += c;
+					} else {
+						break;
+					}
+				}
+			} catch (BadLocationException e) {
+				// ignore
+			}
+
+			StringBuilder indented = new StringBuilder();
+			for (String l : lines) {
+				indented.append(indent).append(l).append(System.lineSeparator());
+			}
+
+			int lineEnd = lineOffset + lineLength;
+			doc.replace(lineEnd, 0, System.lineSeparator() + indented.toString());
 
 		} catch (BadLocationException e) {
 			e.printStackTrace();
@@ -173,8 +199,7 @@ public class GenAllSetterWithDefaultHandler extends AbstractHandler {
 				}
 				if (this.fragment == null) {
 					// fallback to first fragment
-					if (!node.fragments().isEmpty()
-							&& node.fragments().get(0) instanceof VariableDeclarationFragment f) {
+					if (!node.fragments().isEmpty() && node.fragments().get(0) instanceof VariableDeclarationFragment f) {
 						this.fragment = f;
 					}
 				}

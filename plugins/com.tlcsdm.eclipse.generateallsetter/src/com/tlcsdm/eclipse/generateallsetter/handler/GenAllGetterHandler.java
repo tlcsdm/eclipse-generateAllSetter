@@ -1,19 +1,9 @@
 package com.tlcsdm.eclipse.generateallsetter.handler;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.jdt.core.ICompilationUnit;
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTParser;
-import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.IMethodBinding;
-import org.eclipse.jdt.core.dom.ITypeBinding;
-import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -22,6 +12,17 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.texteditor.ITextEditor;
+
+import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.AST;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
+import org.eclipse.jdt.core.dom.IMethodBinding;
+import org.eclipse.jdt.core.dom.ITypeBinding;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GenAllGetterHandler extends AbstractHandler {
 
@@ -76,11 +77,12 @@ public class GenAllGetterHandler extends AbstractHandler {
 
 			List<String> lines = new ArrayList<>();
 			for (IMethodBinding m : type.getDeclaredMethods()) {
-				if (m == null)
+				if (m == null) {
 					continue;
+				}
 				if (m.getParameterTypes() != null && m.getParameterTypes().length == 0) {
 					String name = m.getName();
-					if (name.startsWith("get") && name.length() > 3 || name.startsWith("is") && name.length() > 2) {
+					if ((name.startsWith("get") && name.length() > 3) || (name.startsWith("is") && name.length() > 2)) {
 						String propName;
 						if (name.startsWith("get")) {
 							propName = name.substring(3);
@@ -108,8 +110,32 @@ public class GenAllGetterHandler extends AbstractHandler {
 				sb.append(l).append(System.lineSeparator());
 			}
 
-			// insert at caret
-			doc.replace(offset, 0, sb.toString());
+			// insert at next line with preserved indentation
+			int line = doc.getLineOfOffset(offset);
+			int lineOffset = doc.getLineOffset(line);
+			int lineLength = doc.getLineLength(line);
+			String indent = "";
+			try {
+				String lineText = doc.get(lineOffset, lineLength);
+				for (int i = 0; i < lineText.length(); i++) {
+					char c = lineText.charAt(i);
+					if (c == ' ' || c == '\t') {
+						indent += c;
+					} else {
+						break;
+					}
+				}
+			} catch (BadLocationException e) {
+				// ignore, leave indent empty
+			}
+
+			StringBuilder indented = new StringBuilder();
+			for (String l : lines) {
+				indented.append(indent).append(l).append(System.lineSeparator());
+			}
+
+			int lineEnd = lineOffset + lineLength;
+			doc.replace(lineEnd, 0, System.lineSeparator() + indented.toString());
 
 		} catch (BadLocationException e) {
 			e.printStackTrace();
@@ -130,10 +156,9 @@ public class GenAllGetterHandler extends AbstractHandler {
 
 		@Override
 		public boolean visit(VariableDeclarationFragment node) {
-//			int start = node.getStartPosition();
-//			int end = start + node.getLength();
-			if (offset >= node.getName().getStartPosition()
-					&& offset <= node.getName().getStartPosition() + node.getName().getLength()) {
+			int start = node.getStartPosition();
+			int end = start + node.getLength();
+			if (offset >= node.getName().getStartPosition() && offset <= node.getName().getStartPosition() + node.getName().getLength()) {
 				this.fragment = node;
 			}
 			return super.visit(node);
