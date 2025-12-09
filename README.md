@@ -8,6 +8,9 @@ This plugin generates call to setter method value for class.
 - Generate setter calls with sensible default values (Generate all setter with default value).
 - Generate a converter block inside a method body that creates a new object, calls setters, and returns it (Generate setter getter converter).
 
+## Use  
+<img src="demo.gif" alt="demo" title="demo"/>
+
 ## Build
 
 This project uses [Tycho](https://github.com/eclipse-tycho/tycho) with [Maven](https://maven.apache.org/) to build. It requires Maven 3.9.0 or higher version.
