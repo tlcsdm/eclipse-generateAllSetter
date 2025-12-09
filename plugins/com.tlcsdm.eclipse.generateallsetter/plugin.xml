@@ -46,21 +46,60 @@
             commandId="com.tlcsdm.eclipse.generateallsetter.genAllGetter"
             label="Generate all getter"
             style="push">
+        <!-- Visible only when selection can adapt to a Java field or local variable -->
+        <visibleWhen>
+          <with variable="selection">
+            <count value="1"/>
+            <iterate operator="or">
+              <adapt type="org.eclipse.jdt.core.IField"/>
+              <adapt type="org.eclipse.jdt.core.ILocalVariable"/>
+            </iterate>
+          </with>
+        </visibleWhen>
       </command>
       <command
             commandId="com.tlcsdm.eclipse.generateallsetter.genAllSetterNoDefault"
             label="Generate all setter no default value"
             style="push">
+        <!-- Visible only when selection can adapt to a Java field or local variable -->
+        <visibleWhen>
+          <with variable="selection">
+            <count value="1"/>
+            <iterate operator="or">
+              <adapt type="org.eclipse.jdt.core.IField"/>
+              <adapt type="org.eclipse.jdt.core.ILocalVariable"/>
+            </iterate>
+          </with>
+        </visibleWhen>
       </command>
       <command
             commandId="com.tlcsdm.eclipse.generateallsetter.genAllSetterWithDefault"
             label="Generate all setter with default value"
             style="push">
+        <!-- Visible only when selection can adapt to a Java field or local variable -->
+        <visibleWhen>
+          <with variable="selection">
+            <count value="1"/>
+            <iterate operator="or">
+              <adapt type="org.eclipse.jdt.core.IField"/>
+              <adapt type="org.eclipse.jdt.core.ILocalVariable"/>
+            </iterate>
+          </with>
+        </visibleWhen>
       </command>
       <command
             commandId="com.tlcsdm.eclipse.generateallsetter.genSetterGetterConverter"
             label="Generate setter getter converter"
             style="push">
+        <!-- Visible only when selection can adapt to a Java method (inside a method) -->
+        <visibleWhen>
+          <with variable="selection">
+            <iterate operator="or">
+              <adapt type="org.eclipse.jdt.core.IMethod"/>
+              <!-- also allow visibility when selection is within a compilation unit but caret is inside a method by using activeMenuSelection (fallback) -->
+            </iterate>
+          </with>
+        </visibleWhen>
       </command>
    </menuContribution>
    </extension>
