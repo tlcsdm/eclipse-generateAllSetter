@@ -82,6 +82,7 @@
                   </with>
             </visibleWhen>
       </command>
+      <separator name="com.tlcsdm.eclipse.generateallsetter.end" visible="true" />
    </menuContribution>
    </extension>
 
