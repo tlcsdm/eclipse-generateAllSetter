@@ -42,6 +42,7 @@
    <!-- 在 Java 编辑器上下文菜单添加 -->
    <menuContribution
          locationURI="popup:org.eclipse.jdt.ui.source.menu?after=generateGroup">
+      <separator name="com.tlcsdm.eclipse.generateallsetter.begin" visible="false" />
       <command
             commandId="com.tlcsdm.eclipse.generateallsetter.genAllGetter"
             label="Generate all getter"
