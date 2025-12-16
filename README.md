@@ -2,6 +2,8 @@
 
 This plugin generates call to setter method value for class.
 
+Now Support Eclipse 2024-06 and later, Mac OS X, Linux (with nautilus) and Windows.
+
 ## Feature  
 - Generate local variable assignments from an object's getters (Generate all getter).
 - Generate setter calls without default values (Generate all setter no default value).
