@@ -295,8 +295,8 @@ version(s), and exceptions or additional permissions here}.&quot;
    </license>
 
    <url>
-      <update label="%updateSiteName" url="https://raw.githubusercontent.com/tlcsdm/eclipse-generateAllSetter/master/update_site/"/>
-      <discovery label="Generate All Set Method Update Site" url="https://raw.githubusercontent.com/tlcsdm/eclipse-generateAllSetter/master/update_site/"/>
+      <update label="%updateSiteName" url="https://raw.githubusercontent.com/tlcsdm/eclipse-generateAllSetter/update_site/"/>
+      <discovery label="Generate All Set Method Update Site" url="https://raw.githubusercontent.com/tlcsdm/eclipse-generateAllSetter/update_site/"/>
    </url>
 
    <requires>
