@@ -25,9 +25,9 @@ public class GenSettergetterConverterHandler extends AbstractHandler {
 		}
 
 		try {
-			CompilationUnit cu = HandlerHelper.parseCompilationUnit(ctx.compilationUnit);
+			CompilationUnit cu = HandlerHelper.parseCompilationUnit(ctx.compilationUnit());
 
-			MethodFinder finder = new MethodFinder(ctx.offset);
+			MethodFinder finder = new MethodFinder(ctx.offset());
 			cu.accept(finder);
 			MethodDeclaration method = finder.getMethod();
 			if (method == null) {
@@ -59,15 +59,15 @@ public class GenSettergetterConverterHandler extends AbstractHandler {
 				return null;
 			}
 
-			IDocument doc = ctx.document;
+			IDocument doc = ctx.document();
 			int bodyStart = method.getBody().getStartPosition() + 1;
 			int bodyEnd = method.getBody().getStartPosition() + method.getBody().getLength() - 1;
 
 			int insertOffset;
-			if (ctx.offset < bodyStart) {
+			if (ctx.offset() < bodyStart) {
 				insertOffset = bodyStart;
 			} else {
-				int line = doc.getLineOfOffset(ctx.offset);
+				int line = doc.getLineOfOffset(ctx.offset());
 				int lineEnd = doc.getLineOffset(line) + doc.getLineLength(line);
 				insertOffset = Math.min(lineEnd, bodyEnd);
 			}

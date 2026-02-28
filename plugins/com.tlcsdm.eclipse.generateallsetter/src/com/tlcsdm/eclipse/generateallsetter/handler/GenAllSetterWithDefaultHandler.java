@@ -23,9 +23,9 @@ public class GenAllSetterWithDefaultHandler extends AbstractHandler {
 		}
 
 		try {
-			CompilationUnit cu = HandlerHelper.parseCompilationUnit(ctx.compilationUnit);
+			CompilationUnit cu = HandlerHelper.parseCompilationUnit(ctx.compilationUnit());
 
-			HandlerHelper.VariableFinder finder = new HandlerHelper.VariableFinder(ctx.offset);
+			HandlerHelper.VariableFinder finder = new HandlerHelper.VariableFinder(ctx.offset());
 			cu.accept(finder);
 			VariableDeclarationFragment fragment = finder.getFragment();
 
@@ -47,7 +47,7 @@ public class GenAllSetterWithDefaultHandler extends AbstractHandler {
 				return null;
 			}
 
-			HandlerHelper.insertLinesAfterOffset(ctx.document, ctx.offset, lines);
+			HandlerHelper.insertLinesAfterOffset(ctx.document(), ctx.offset(), lines);
 
 		} catch (BadLocationException e) {
 			HandlerHelper.logError("Failed to insert setter code", e);

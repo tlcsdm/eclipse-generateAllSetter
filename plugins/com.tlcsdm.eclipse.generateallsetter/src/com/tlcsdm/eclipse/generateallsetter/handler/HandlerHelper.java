@@ -3,7 +3,6 @@ package com.tlcsdm.eclipse.generateallsetter.handler;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -36,21 +35,8 @@ public final class HandlerHelper {
 	/**
 	 * Holds the editor context needed by all handlers.
 	 */
-	public static class EditorContext {
-		public final ITextEditor textEditor;
-		public final IEditorInput input;
-		public final ICompilationUnit compilationUnit;
-		public final IDocument document;
-		public final int offset;
-
-		EditorContext(ITextEditor textEditor, IEditorInput input, ICompilationUnit compilationUnit, IDocument document,
-				int offset) {
-			this.textEditor = textEditor;
-			this.input = input;
-			this.compilationUnit = compilationUnit;
-			this.document = document;
-			this.offset = offset;
-		}
+	public record EditorContext(ITextEditor textEditor, IEditorInput input, ICompilationUnit compilationUnit,
+			IDocument document, int offset) {
 	}
 
 	/**
@@ -244,16 +230,20 @@ public final class HandlerHelper {
 	 * Logs an error message to the Eclipse error log.
 	 */
 	public static void logError(String message, Throwable t) {
-		ILog log = Activator.getDefault().getLog();
-		log.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, message, t));
+		Activator activator = Activator.getDefault();
+		if (activator != null) {
+			activator.getLog().log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, message, t));
+		}
 	}
 
 	/**
 	 * Logs a warning message to the Eclipse error log.
 	 */
 	public static void logWarning(String message, Throwable t) {
-		ILog log = Activator.getDefault().getLog();
-		log.log(new Status(IStatus.WARNING, Activator.PLUGIN_ID, message, t));
+		Activator activator = Activator.getDefault();
+		if (activator != null) {
+			activator.getLog().log(new Status(IStatus.WARNING, Activator.PLUGIN_ID, message, t));
+		}
 	}
 
 	/**
