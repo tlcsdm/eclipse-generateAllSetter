@@ -8,6 +8,7 @@ on:
       - 'LICENSE'
       - '.gitignore'
       - '.gitattributes'
+      - '.github/**'
   workflow_dispatch:
 
 permissions:
